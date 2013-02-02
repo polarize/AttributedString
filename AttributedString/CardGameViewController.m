@@ -21,20 +21,87 @@
 
 @implementation CardGameViewController
 
-- (IBAction)underline
+
+-(void)addLableAttributes:(NSDictionary *)attributes range:(NSRange)range
 {
-    NSRange range = [[self.stringLabel.attributedText string]rangeOfString:[self selectedWord]];
-    
     if (range.location != NSNotFound) {
         NSMutableAttributedString *matt = [self.stringLabel.attributedText mutableCopy];
-        NSDictionary *underlineDictAtt = @{NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle)};
-        
-        [matt addAttributes:underlineDictAtt range:range];
-        
+        [matt addAttributes:attributes range:range];
         self.stringLabel.attributedText = matt;
     }
+
+}
+-(void)addSelectedWordAttributes:(NSDictionary *)attributes
+{
+    NSRange range = [[self.stringLabel.attributedText string]rangeOfString:[self selectedWord]];
+    [self addLableAttributes:attributes range:range];
 }
 
+
+
+- (IBAction)underline
+{
+    NSDictionary *underlineDictAtt = @{NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle)};
+    [self addSelectedWordAttributes:underlineDictAtt];
+}
+
+- (IBAction)unUnderline
+{
+    
+    NSDictionary *unUnderlinAttrDict = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleNone)};
+    [self addSelectedWordAttributes:unUnderlinAttrDict];
+}
+
+
+
+- (IBAction)changeFontSize {
+   
+    /*
+    CGFloat fontSize = [UIFont systemFontSize];
+    //
+    int index = self.selectedWordStepper.value;
+    
+    NSDictionary *attributes = [self.stringLabel.attributedText attributesAtIndex:index effectiveRange:NULL];
+    
+    UIFont *existingFont = attributes[NSFontAttributeName];
+    if (existingFont) {
+        fontSize = existingFont.pointSize;
+    }
+    
+    */
+   self.fontSizeStepper.minimumValue = 20;
+    double newFontSize = self.fontSizeStepper.value;
+    
+    
+    self.fontSizeLable.text =[NSString stringWithFormat:@"Font size: %d", (int)newFontSize];
+    NSDictionary *fontSizeAttr = @{NSFontAttributeName: [UIFont systemFontOfSize:newFontSize]};
+    [self addSelectedWordAttributes:fontSizeAttr];
+}
+
+- (IBAction)changeColor:(UIButton *)sender
+{
+    NSDictionary *colorAttribute = @{NSForegroundColorAttributeName: sender.backgroundColor};
+    [self addSelectedWordAttributes:colorAttribute];
+}
+
+- (IBAction)changeFontStyle:(UIButton *)sender
+{
+    CGFloat fontSize = [UIFont systemFontSize];
+    
+   // int index = self.selectedWordStepper.value;
+    
+    NSDictionary *attributes = [self.stringLabel.attributedText attributesAtIndex:0 effectiveRange:NULL];
+    UIFont *existingFont = attributes[NSFontAttributeName];
+    
+    if (existingFont) {
+        fontSize = existingFont.pointSize;
+    }
+    
+    UIFont *font = [sender.titleLabel.font fontWithSize:fontSize];
+    NSDictionary *newForntAtt = @{NSFontAttributeName: font};
+    
+    [self addSelectedWordAttributes:newForntAtt];
+}
 
 
 -(NSArray *)wordList
@@ -57,11 +124,7 @@
     self.selectedWordStepper.maximumValue = [[self wordList]count]-1;
     self.selectedWordLable.text = [self selectedWord];
 }
-- (IBAction)updateFontSize {
-    self.fontSizeStepper.minimumValue = 10;
-    
-    self.fontSizeLable.text =[NSString stringWithFormat:@"Font size: %d", (int)self.fontSizeStepper.value];
-}
+
 
 
 - (void)viewDidLoad
@@ -70,7 +133,7 @@
     
     [self updateSelectedWord];
     
-    NSString *string = @"Hallo!";
+    NSString *string = @"The new string attributes will help make labels even more amazing. \nWelcome NSMutableAttributedString!";
 	NSMutableAttributedString *attributedString = [[NSMutableAttributedString alloc]initWithString:string];
     
     NSDictionary *dictOfAttributs = @{NSFontAttributeName : [UIFont systemFontOfSize:22], NSForegroundColorAttributeName : [UIColor greenColor]};
@@ -81,7 +144,7 @@
     [attributedString addAttributes:dictOfAttributs range:range];
     
     
-    //self.stringLabel.text = [attributedString string];
+    self.stringLabel.text = string;
     
 }
 
